@@ -1,6 +1,7 @@
 package com.example.patientappv02.presentation.features.patients
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,9 +10,13 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
+import androidx.navigation.fragment.findNavController
+import com.example.patientappv02.presentation.R
 import com.example.patientappv02.presentation.databinding.FragmentPatientBinding
-import com.example.patientappv02.presentation.features.adapter.PatientAdapter
+import com.example.patientappv02.presentation.features.patients.adapter.PatientAdapter
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -34,7 +39,7 @@ class PatientFragment:Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initObserver()
-
+        initListener()
     }
 
     private fun initObserver() {
@@ -56,6 +61,22 @@ class PatientFragment:Fragment() {
                 if (it != null){
                     Toast.makeText(requireContext(),it?.message.toString(),Toast.LENGTH_SHORT).show()
                 }
+            }
+        }
+    }
+
+
+    private fun initListener() {
+        binding.fabAdd.setOnClickListener {
+            Log.d("TAGGG", "didn't Enter the fragment")
+            findNavController().navigate(R.id.addPatientFragment)
+        }
+
+        binding.swipeRefresher.setOnRefreshListener {
+            viewModel.getPatients()
+            lifecycleScope.launch {
+                delay(3000)
+                binding.swipeRefresher.isRefreshing = false
             }
         }
     }
