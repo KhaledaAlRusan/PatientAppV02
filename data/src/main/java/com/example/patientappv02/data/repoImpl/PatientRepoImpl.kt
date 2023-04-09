@@ -2,6 +2,7 @@ package com.example.patientappv02.data.repoImpl
 
 import com.example.patientappv02.data.datasource.PatientDataSource
 import com.example.patientappv02.domain.models.add.AddPatientRequest
+import com.example.patientappv02.domain.models.delete.DeletePatientResponse
 import com.example.patientappv02.domain.models.patients.Data
 import com.example.patientappv02.domain.repo.PatientRepo
 import javax.inject.Inject
@@ -13,5 +14,9 @@ class PatientRepoImpl @Inject constructor(private val patientDataSource: Patient
 
     override suspend fun postPatient(addPatientRequest: AddPatientRequest): Data{
         return patientDataSource.postPatient(addPatientRequest)
+    }
+
+    override suspend fun deletePatient(id: String): DeletePatientResponse {
+        return patientDataSource.deletePatient(id)
     }
 }
