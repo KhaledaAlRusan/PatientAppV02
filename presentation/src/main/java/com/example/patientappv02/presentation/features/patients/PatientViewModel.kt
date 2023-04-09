@@ -4,8 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.patientappv02.domain.models.delete.DeletePatientResponse
 import com.example.patientappv02.domain.models.patients.Data
 import com.example.patientappv02.domain.repo.PatientRepo
+import com.example.patientappv02.domain.usecase.delete.DeletePatientUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,8 +15,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class PatientViewModel @Inject constructor(private val repo: PatientRepo): ViewModel() {
+class PatientViewModel @Inject constructor(private val repo: PatientRepo,
+private val deletePatientUseCase: DeletePatientUseCase
+): ViewModel() {
 
+    //State flow functionality for getting all the data
     private val _patientMutableStateFlow:MutableStateFlow<List<Data?>?> = MutableStateFlow(emptyList())
      val patientStateFlow = _patientMutableStateFlow.asStateFlow()
 
@@ -44,5 +49,31 @@ class PatientViewModel @Inject constructor(private val repo: PatientRepo): ViewM
         }
     }
 
+
+    //Live Data implementation for delete patient
+
+    private val _deletePatientLiveData:MutableLiveData<DeletePatientResponse> = MutableLiveData()
+    val deletePatientLiveData:LiveData<DeletePatientResponse> = _deletePatientLiveData
+
+    private val _deleteLoadingLiveData:MutableLiveData<Boolean> = MutableLiveData()
+    val deleteLoadingLiveData:LiveData<Boolean> = _deleteLoadingLiveData
+
+    private val _deleteErrorLiveData:MutableLiveData<Exception> = MutableLiveData()
+    val deleteErrorLiveData:LiveData<java.lang.Exception> = _deleteErrorLiveData
+
+    fun deletePatients(id:String){
+        viewModelScope.launch {
+            _deleteLoadingLiveData.postValue(true)
+            try {
+                _deletePatientLiveData.postValue(repo.deletePatient(id))
+            }
+            catch (e:Exception)
+            {
+                _deleteErrorLiveData.postValue(e)
+            }
+            _deleteLoadingLiveData.postValue(false)
+
+        }
+    }
 
 }
