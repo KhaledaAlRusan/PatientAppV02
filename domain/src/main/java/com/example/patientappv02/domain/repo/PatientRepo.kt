@@ -11,4 +11,6 @@ interface PatientRepo {
     suspend fun postPatient(addPatientRequest: AddPatientRequest):Data?
 
     suspend fun deletePatient(id:String):DeletePatientResponse
+
+    suspend fun getPatient(id:String):Data?
 }

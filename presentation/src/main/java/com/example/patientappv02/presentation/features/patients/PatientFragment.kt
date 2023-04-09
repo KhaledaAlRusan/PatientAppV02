@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -46,7 +47,7 @@ class PatientFragment:Fragment() {
     }
 
     private fun initAdapter() {
-        adapter  = PatientAdapter(::deletePatient)
+        adapter  = PatientAdapter(::deletePatient,::onClickItem)
         binding.recyclerView.adapter = adapter
     }
 
@@ -96,7 +97,7 @@ class PatientFragment:Fragment() {
     }
 
 
-    fun deletePatient(id:String?){
+    private fun deletePatient(id:String?){
         MaterialAlertDialogBuilder(requireContext())
             .setMessage("Do you want to delete this item?")
             .setNegativeButton("No"){dialog,_ ->
@@ -109,6 +110,10 @@ class PatientFragment:Fragment() {
                 dialog.dismiss()
             }
             .show()
+    }
+
+    private fun onClickItem(id: String?){
+        findNavController().navigate(R.id.detailsPatientFragment, bundleOf("id" to id))
     }
 
 }

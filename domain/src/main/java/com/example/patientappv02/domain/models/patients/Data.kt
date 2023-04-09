@@ -35,3 +35,8 @@ data class Data(
     //Local var
     var selected:Boolean = false
 )
+{
+    fun getPatientInfo():String{
+        return ("Name: $name\nEmail: $email\nGender: $gender")
+    }
+}

@@ -19,4 +19,8 @@ class PatientRepoImpl @Inject constructor(private val patientDataSource: Patient
     override suspend fun deletePatient(id: String): DeletePatientResponse {
         return patientDataSource.deletePatient(id)
     }
+
+    override suspend fun getPatient(id:String): Data? {
+        return patientDataSource.getPatient(id).data
+    }
 }

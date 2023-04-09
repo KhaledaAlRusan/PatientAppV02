@@ -8,6 +8,7 @@ import com.example.patientappv02.domain.models.delete.DeletePatientResponse
 import com.example.patientappv02.domain.models.patients.Data
 import com.example.patientappv02.domain.repo.PatientRepo
 import com.example.patientappv02.domain.usecase.delete.DeletePatientUseCase
+import com.example.patientappv02.domain.usecase.patients.GetPatientUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,7 +16,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class PatientViewModel @Inject constructor(private val repo: PatientRepo,
+class PatientViewModel @Inject constructor(private val getPatientUseCase: GetPatientUseCase,
 private val deletePatientUseCase: DeletePatientUseCase
 ): ViewModel() {
 
@@ -38,7 +39,7 @@ private val deletePatientUseCase: DeletePatientUseCase
         viewModelScope.launch {
             _loadingMutableStateFlow.emit(true)
             try {
-                _patientMutableStateFlow.emit(repo.getPatients())
+                _patientMutableStateFlow.emit(getPatientUseCase())
             }
             catch (e:Exception)
             {
@@ -52,8 +53,8 @@ private val deletePatientUseCase: DeletePatientUseCase
 
     //Live Data implementation for delete patient
 
-    private val _deletePatientLiveData:MutableLiveData<DeletePatientResponse> = MutableLiveData()
-    val deletePatientLiveData:LiveData<DeletePatientResponse> = _deletePatientLiveData
+    private val _deletePatientLiveData:MutableLiveData<DeletePatientResponse?> = MutableLiveData()
+    val deletePatientLiveData:LiveData<DeletePatientResponse?> = _deletePatientLiveData
 
     private val _deleteLoadingLiveData:MutableLiveData<Boolean> = MutableLiveData()
     val deleteLoadingLiveData:LiveData<Boolean> = _deleteLoadingLiveData
@@ -65,7 +66,7 @@ private val deletePatientUseCase: DeletePatientUseCase
         viewModelScope.launch {
             _deleteLoadingLiveData.postValue(true)
             try {
-                _deletePatientLiveData.postValue(repo.deletePatient(id))
+                _deletePatientLiveData.postValue(deletePatientUseCase(id))
             }
             catch (e:Exception)
             {

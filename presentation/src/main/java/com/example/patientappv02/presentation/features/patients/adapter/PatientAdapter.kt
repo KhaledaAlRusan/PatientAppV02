@@ -8,20 +8,28 @@ import com.example.patientappv02.domain.models.patients.Data
 import com.example.patientappv02.presentation.databinding.RowPatientBinding
 import androidx.recyclerview.widget.ListAdapter
 
-class PatientAdapter(private val onDeletePatient:(id:String?)->Unit
+class PatientAdapter(private val onDeletePatient:(id:String?)->Unit,
+                     private val onClickPatient:(id:String?)->Unit
     ):ListAdapter<Data,PatientAdapter.PatientViewHolder>(DiffCallBack) {
     var indexLastSelected = -1
     inner class PatientViewHolder(private val binding: RowPatientBinding):RecyclerView.ViewHolder(binding.root){
         fun bind(model: Data?,position: Int){
             binding.model = model
             binding.cardView.setOnClickListener{
-                if (position != indexLastSelected && indexLastSelected !=-1) {
-                        getItem(indexLastSelected)?.selected = false
-                        notifyItemChanged(indexLastSelected)
+                if(position != indexLastSelected){
+
+                    // Set the 'selected' property of all items to false
+                    for (i in 0 until itemCount) {
+                        getItem(i)?.selected = false
+                        notifyItemChanged(i)
+                    }
+
+                    indexLastSelected = position
+                    getItem(position)?.selected = true
+                    notifyItemChanged(position)
                 }
-                indexLastSelected = position
-                getItem(position)?.selected = true
-                notifyItemChanged(position)
+
+                onClickPatient(model?.id)
             }
             binding.ivDelete.setOnClickListener {
                 onDeletePatient(model?.id)
